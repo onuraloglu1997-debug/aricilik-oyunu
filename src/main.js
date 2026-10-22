@@ -2,6 +2,7 @@
 import * as THREE from "three";
 import { CSS2DObject, CSS2DRenderer } from "three/examples/jsm/renderers/CSS2DRenderer.js";
 import "../style.css";
+import { supabase } from "./supabase.js";
 
 const container = document.querySelector("#game-container");
 const loading = document.querySelector("#loading-message");
