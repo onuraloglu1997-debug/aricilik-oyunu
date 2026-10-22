@@ -1,6 +1,6 @@
 
 import * as THREE from "three";
-import "./style.css";
+import "../style.css";
 
 const container = document.querySelector("#game-container");
 const loading = document.querySelector("#loading-message");
