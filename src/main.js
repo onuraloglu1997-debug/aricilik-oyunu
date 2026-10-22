@@ -83,6 +83,79 @@ function addBox(width, height, depth, color, x, y, z) {
   return mesh;
 }
 
+const remoteHives = new Map();
+
+const neighborSpots = [
+  [4, 3],
+  [-4, 3],
+  [4, -3],
+  [-4, -3],
+  [0, 5],
+  [0, -5],
+];
+
+function createRemoteHive() {
+  const hiveGroup = new THREE.Group();
+
+  function addHivePart(width, height, depth, color, x, y, z) {
+    const part = new THREE.Mesh(
+      new THREE.BoxGeometry(width, height, depth),
+      new THREE.MeshLambertMaterial({ color })
+    );
+
+    part.position.set(x, y, z);
+    hiveGroup.add(part);
+  }
+
+  // Kovan gövdesi ve çatısı
+  addHivePart(2.2, 1.9, 1.8, "#bd8b50", 0, 0.95, 0);
+  addHivePart(2.35, 0.18, 1.95, "#70452b", 0, 1.98, 0);
+
+  // Tek giriş deliği
+  const entrance = new THREE.Mesh(
+    new THREE.CircleGeometry(0.16, 20),
+    new THREE.MeshBasicMaterial({ color: "#302219" })
+  );
+  entrance.position.set(0, 0.9, 0.906);
+  hiveGroup.add(entrance);
+
+  // Kovan ayakları
+  addHivePart(0.18, 0.25, 0.18, "#65422b", -0.72, 0.12, 0.55);
+  addHivePart(0.18, 0.25, 0.18, "#65422b", 0.72, 0.12, 0.55);
+  addHivePart(0.18, 0.25, 0.18, "#65422b", -0.72, 0.12, -0.55);
+  addHivePart(0.18, 0.25, 0.18, "#65422b", 0.72, 0.12, -0.55);
+
+  scene.add(hiveGroup);
+  return hiveGroup;
+}
+
+function renderRemotePlayers(players) {
+  const remoteIds = Object.keys(players)
+    .filter((id) => id !== playerId)
+    .sort();
+
+  const onlineIds = new Set(remoteIds);
+
+  // Ayrılan oyuncuların kovanlarını kaldır
+  for (const [id, hive] of remoteHives) {
+    if (!onlineIds.has(id)) {
+      scene.remove(hive);
+      remoteHives.delete(id);
+    }
+  }
+
+  // Çevrimiçi oyuncuların kovanlarını göster
+  remoteIds.forEach((id, index) => {
+    if (!remoteHives.has(id)) {
+      remoteHives.set(id, createRemoteHive());
+    }
+
+    const hive = remoteHives.get(id);
+    const [x, z] = neighborSpots[index % neighborSpots.length];
+    hive.position.set(x, 0, z);
+  });
+}
+
 // Kovan: tek kutu ve tek giriş deliği
 addBox(2.2, 1.9, 1.8, "#bd8b50", 0, 0.95, 0);
 addBox(2.35, 0.18, 1.95, "#70452b", 0, 1.98, 0);
