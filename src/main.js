@@ -16,7 +16,10 @@ const worldChannel = supabase.channel("apiary-world", {
   },
 });
 
-worldChannel.subscribe((status) => {
+worldChannel.subscribe((status, err) => {
+  console.log("Supabase durumu:", status);
+  if (err) console.error("Supabase ayrıntılı hata:", err);
+
   if (status === "SUBSCRIBED") {
     worldChannel.track({
       playerId,
@@ -26,7 +29,7 @@ worldChannel.subscribe((status) => {
   }
 
   if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
-    console.error("Çevrimiçi dünyaya bağlanılamadı:", status);
+    console.error("Çevrimiçi dünyaya bağlanılamadı:", status, err);
   }
 });
 const loading = document.querySelector("#loading-message");
