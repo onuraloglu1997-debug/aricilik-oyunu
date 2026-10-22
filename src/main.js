@@ -1,5 +1,6 @@
 
 import * as THREE from "three";
+import { CSS2DObject, CSS2DRenderer } from "three/examples/jsm/renderers/CSS2DRenderer.js";
 import "../style.css";
 
 const container = document.querySelector("#game-container");
@@ -18,7 +19,13 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
 renderer.shadowMap.enabled = false;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 container.appendChild(renderer.domElement);
-
+const labelRenderer = new CSS2DRenderer();
+labelRenderer.domElement.style.position = "absolute";
+labelRenderer.domElement.style.top = "0";
+labelRenderer.domElement.style.left = "0";
+labelRenderer.domElement.style.pointerEvents = "none";
+labelRenderer.domElement.style.zIndex = "2";
+container.appendChild(labelRenderer.domElement);
 scene.add(new THREE.HemisphereLight("#e6f4ff", "#795239", 2));
 
 const sunlight = new THREE.DirectionalLight("#fff0d0", 2.2);
@@ -160,7 +167,24 @@ for (let i = 0; i < 5; i++) {
 }
 
 const beeNames = ["Pamuk", "Boncuk", "Balım", "Pıtırcık", "Sarı"];
+const beeLabels = bees.map((bee, index) => {
+  const element = document.createElement("div");
 
+  element.textContent = beeNames[index];
+  element.style.background = "rgba(45, 32, 22, 0.85)";
+  element.style.color = "#fff0ce";
+  element.style.padding = "3px 7px";
+  element.style.borderRadius = "6px";
+  element.style.fontSize = "12px";
+  element.style.fontWeight = "bold";
+  element.style.whiteSpace = "nowrap";
+
+  const label = new CSS2DObject(element);
+  label.position.set(0, 0.4, 0);
+  bee.mesh.add(label);
+
+  return element;
+});
 const beeList = document.querySelector("#bee-list");
 
 function renderBeeList() {
@@ -182,6 +206,7 @@ function renderBeeList() {
     input.addEventListener("change", () => {
       beeNames[index] = input.value.trim() || `Arı ${index + 1}`;
       input.value = beeNames[index];
+      beeLabels[index].textContent = beeNames[index];
     });
 
     row.append(icon, input);
@@ -201,6 +226,7 @@ function resize() {
   camera.aspect = width / height;
   camera.updateProjectionMatrix();
   renderer.setSize(width, height);
+  labelRenderer.setSize(width, height);
 }
 
 window.addEventListener("resize", resize);
@@ -247,6 +273,7 @@ function animate() {
   });
 
   renderer.render(scene, camera);
+  labelRenderer.render(scene, camera);
 }
 
 animate();
