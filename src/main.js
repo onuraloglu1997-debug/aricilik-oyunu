@@ -15,12 +15,16 @@ const worldChannel = supabase.channel("apiary-world", {
     },
   },
 });
+
 worldChannel.on("presence", { event: "sync" }, () => {
   const players = worldChannel.presenceState();
 
   console.log("Çevrimiçi oyuncular:", players);
   console.log("Oyuncu sayısı:", Object.keys(players).length);
+
+  renderRemotePlayers(players);
 });
+
 worldChannel.subscribe((status, err) => {
   console.log("Supabase durumu:", status);
   if (err) console.error("Supabase ayrıntılı hata:", err);
