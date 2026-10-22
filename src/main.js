@@ -1,0 +1,219 @@
+
+import * as THREE from "three";
+import "./style.css";
+
+const container = document.querySelector("#game-container");
+const loading = document.querySelector("#loading-message");
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color("#b9d5d8");
+scene.fog = new THREE.Fog("#b9d5d8", 18, 45);
+
+const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
+camera.position.set(0, 8, 15);
+camera.lookAt(0, 0, 0);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+renderer.shadowMap.enabled = false;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+container.appendChild(renderer.domElement);
+
+scene.add(new THREE.HemisphereLight("#e6f4ff", "#795239", 2));
+
+const sunlight = new THREE.DirectionalLight("#fff0d0", 2.2);
+sunlight.position.set(-5, 10, 6);
+scene.add(sunlight);
+
+const ground = new THREE.Mesh(
+  new THREE.PlaneGeometry(50, 50),
+  new THREE.MeshLambertMaterial({ color: "#805634" })
+);
+ground.rotation.x = -Math.PI / 2;
+ground.position.y = -0.05;
+scene.add(ground);
+
+function addBox(width, height, depth, color, x, y, z) {
+  const mesh = new THREE.Mesh(
+    new THREE.BoxGeometry(width, height, depth),
+    new THREE.MeshLambertMaterial({ color })
+  );
+  mesh.position.set(x, y, z);
+  scene.add(mesh);
+  return mesh;
+}
+
+// Kovan: tek kutu ve tek giriş deliği
+addBox(2.2, 1.9, 1.8, "#bd8b50", 0, 0.95, 0);
+addBox(2.35, 0.18, 1.95, "#70452b", 0, 1.98, 0);
+
+const entrance = new THREE.Mesh(
+  new THREE.CircleGeometry(0.16, 20),
+  new THREE.MeshBasicMaterial({ color: "#302219" })
+);
+entrance.position.set(0, 0.9, 0.906);
+scene.add(entrance);
+
+// Kovanın altındaki ayaklar
+addBox(0.18, 0.25, 0.18, "#65422b", -0.72, 0.12, 0.55);
+addBox(0.18, 0.25, 0.18, "#65422b", 0.72, 0.12, 0.55);
+addBox(0.18, 0.25, 0.18, "#65422b", -0.72, 0.12, -0.55);
+addBox(0.18, 0.25, 0.18, "#65422b", 0.72, 0.12, -0.55);
+
+const flowerColors = ["#e8d45b", "#e58ba9", "#a9a1e8", "#fff0df"];
+const flowers = [];
+
+for (let i = 0; i < 38; i++) {
+  const x = (Math.random() - 0.5) * 20;
+  const z = (Math.random() - 0.5) * 16;
+
+  if (Math.abs(x) < 2 && Math.abs(z) < 2) continue;
+
+  const flower = new THREE.Group();
+  flower.position.set(x, 0, z);
+
+  const stem = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.025, 0.035, 0.42, 5),
+    new THREE.MeshLambertMaterial({ color: "#4b783c" })
+  );
+  stem.position.y = 0.21;
+  flower.add(stem);
+
+  const petals = new THREE.Mesh(
+    new THREE.SphereGeometry(0.13, 8, 6),
+    new THREE.MeshLambertMaterial({
+      color: flowerColors[i % flowerColors.length]
+    })
+  );
+  petals.position.y = 0.45;
+  petals.scale.set(1, 0.65, 1);
+  flower.add(petals);
+
+  const center = new THREE.Mesh(
+    new THREE.SphereGeometry(0.055, 8, 6),
+    new THREE.MeshLambertMaterial({ color: "#754421" })
+  );
+  center.position.y = 0.49;
+  flower.add(center);
+
+  scene.add(flower);
+  flowers.push(flower);
+}
+
+// Basit ot kümeleri
+for (let i = 0; i < 65; i++) {
+  const x = (Math.random() - 0.5) * 24;
+  const z = (Math.random() - 0.5) * 18;
+
+  const grass = new THREE.Mesh(
+    new THREE.ConeGeometry(0.09, 0.38, 4),
+    new THREE.MeshLambertMaterial({ color: "#668347" })
+  );
+  grass.position.set(x, 0.16, z);
+  grass.rotation.z = (Math.random() - 0.5) * 0.6;
+  scene.add(grass);
+}
+
+// Beş basit arı
+const bees = [];
+
+for (let i = 0; i < 5; i++) {
+  const bee = new THREE.Group();
+
+  const body = new THREE.Mesh(
+    new THREE.SphereGeometry(0.14, 10, 8),
+    new THREE.MeshLambertMaterial({ color: "#edbd35" })
+  );
+  body.scale.set(1.25, 0.85, 0.85);
+  bee.add(body);
+
+  const stripe = new THREE.Mesh(
+    new THREE.BoxGeometry(0.06, 0.19, 0.19),
+    new THREE.MeshLambertMaterial({ color: "#382b20" })
+  );
+  stripe.position.x = 0.03;
+  bee.add(stripe);
+
+  for (const side of [-1, 1]) {
+    const wing = new THREE.Mesh(
+      new THREE.SphereGeometry(0.09, 8, 6),
+      new THREE.MeshLambertMaterial({
+        color: "#eff4e7",
+        transparent: true,
+        opacity: 0.8
+      })
+    );
+    wing.position.set(-0.02, 0.12, side * 0.12);
+    wing.scale.set(0.7, 0.25, 1.2);
+    bee.add(wing);
+  }
+
+  bee.position.set(0, 1.2 + i * 0.15, 1.2);
+  scene.add(bee);
+
+  bees.push({
+    mesh: bee,
+    flowerIndex: i % flowers.length,
+    phase: Math.random() * Math.PI * 2,
+    speed: 0.45 + Math.random() * 0.2
+  });
+}
+
+function resize() {
+  const width = container.clientWidth;
+  const height = container.clientHeight;
+  if (!width || !height) return;
+
+  camera.aspect = width / height;
+  camera.updateProjectionMatrix();
+  renderer.setSize(width, height);
+}
+
+window.addEventListener("resize", resize);
+resize();
+
+const clock = new THREE.Clock();
+
+function animate() {
+  requestAnimationFrame(animate);
+
+  const time = clock.getElapsedTime();
+
+  bees.forEach((bee) => {
+    const flower = flowers[bee.flowerIndex];
+    const cycle = (time * bee.speed + bee.phase) % 10;
+
+    let targetX;
+    let targetZ;
+
+    if (cycle < 2) {
+      targetX = 0;
+      targetZ = 1.1;
+    } else if (cycle < 4) {
+      targetX = flower.position.x;
+      targetZ = flower.position.z;
+    } else if (cycle < 6) {
+      targetX = flower.position.x;
+      targetZ = flower.position.z;
+    } else {
+      targetX = 0;
+      targetZ = 1.1;
+    }
+
+    const targetY = cycle >= 2 && cycle < 6 ? 0.7 : 1.15;
+    const mesh = bee.mesh;
+
+    mesh.position.x += (targetX - mesh.position.x) * 0.025;
+    mesh.position.z += (targetZ - mesh.position.z) * 0.025;
+    mesh.position.y +=
+      (targetY + Math.sin(time * 7 + bee.phase) * 0.12 - mesh.position.y) *
+      0.06;
+
+    mesh.rotation.z = Math.sin(time * 4 + bee.phase) * 0.12;
+  });
+
+  renderer.render(scene, camera);
+}
+
+animate();
+loading?.remove();
