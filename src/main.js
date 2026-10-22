@@ -159,6 +159,40 @@ for (let i = 0; i < 5; i++) {
   });
 }
 
+const beeNames = ["Pamuk", "Boncuk", "Balım", "Pıtırcık", "Sarı"];
+
+const beeList = document.querySelector("#bee-list");
+
+function renderBeeList() {
+  beeList.innerHTML = "";
+
+  beeNames.forEach((name, index) => {
+    const row = document.createElement("div");
+    row.className = "bee-item";
+
+    const icon = document.createElement("span");
+    icon.textContent = "🐝";
+
+    const input = document.createElement("input");
+    input.type = "text";
+    input.maxLength = 20;
+    input.value = name;
+    input.setAttribute("aria-label", `${index + 1}. arının adı`);
+
+    input.addEventListener("change", () => {
+      beeNames[index] = input.value.trim() || `Arı ${index + 1}`;
+      input.value = beeNames[index];
+    });
+
+    row.append(icon, input);
+    beeList.appendChild(row);
+  });
+
+  document.querySelector("#bee-count").textContent = `${bees.length} arı`;
+}
+
+renderBeeList();
+
 function resize() {
   const width = container.clientWidth;
   const height = container.clientHeight;
