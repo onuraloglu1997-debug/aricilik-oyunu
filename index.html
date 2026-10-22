@@ -1,0 +1,40 @@
+
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#6b472d" />
+    <meta
+      name="description"
+      content="Kovanını izle, arılarını tanı ve balını biriktir."
+    />
+    <title>Arıcılık - Sakin Bir Kovan</title>
+  </head>
+  <body>
+    <div id="app">
+      <header id="top-bar">
+        <div class="game-title">🐝 Arıcılık</div>
+        <div id="honey-counter">🍯 0 g bal</div>
+      </header>
+
+      <main id="game-layout">
+        <section id="game-container" aria-label="Arıcılık oyun alanı">
+          <div id="loading-message">Kovan hazırlanıyor...</div>
+        </section>
+
+        <aside id="bee-panel">
+          <h2>Arılarım</h2>
+          <p id="bee-count">5 arı</p>
+          <div id="bee-list"></div>
+        </aside>
+      </main>
+
+      <footer id="game-footer">
+        Sakin bir gün, çalışkan arılar.
+      </footer>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
