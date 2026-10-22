@@ -5,6 +5,30 @@ import "../style.css";
 import { supabase } from "./supabase.js";
 
 const container = document.querySelector("#game-container");
+const playerId = sessionStorage.getItem("playerId") || crypto.randomUUID();
+sessionStorage.setItem("playerId", playerId);
+
+const worldChannel = supabase.channel("apiary-world", {
+  config: {
+    presence: {
+      key: playerId,
+    },
+  },
+});
+
+worldChannel.subscribe((status) => {
+  if (status === "SUBSCRIBED") {
+    worldChannel.track({
+      playerId,
+      joinedAt: Date.now(),
+    });
+    console.log("Çevrimiçi dünyaya bağlandın!");
+  }
+
+  if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
+    console.error("Çevrimiçi dünyaya bağlanılamadı:", status);
+  }
+});
 const loading = document.querySelector("#loading-message");
 
 const scene = new THREE.Scene();
