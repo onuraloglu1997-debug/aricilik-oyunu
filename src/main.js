@@ -171,20 +171,30 @@ function renderRemotePlayers(players) {
     }
   }
 
-  // Çevrimiçi oyuncuların kovanlarını göster
+ 
   remoteIds.forEach((id, index) => {
+    const playerData = players[id]?.[0];
+    const playerName = playerData?.playerName || "Arıcı";
+
     if (!remoteHives.has(id)) {
-      const playerData = players[id]?.[0];
-remoteHives.set(
-  id,
-  createRemoteHive(playerData?.playerName || "Arıcı")
-);
+      remoteHives.set(id, createRemoteHive(playerName));
     }
 
     const hive = remoteHives.get(id);
+
+    // Kovanın üzerindeki ismi her güncellemede yenile
+    const nameLabel = hive.children.find(
+      (child) => child instanceof CSS2DObject
+    );
+
+    if (nameLabel) {
+      nameLabel.element.textContent = playerName;
+    }
+
     const [x, z] = neighborSpots[index % neighborSpots.length];
     hive.position.set(x, 0, z);
   });
+
 }
 
 // Kovan: tek kutu ve tek giriş deliği
