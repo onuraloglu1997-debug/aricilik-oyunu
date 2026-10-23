@@ -84,7 +84,40 @@ scene.add(new THREE.HemisphereLight("#e6f4ff", "#795239", 2));
 const sunlight = new THREE.DirectionalLight("#fff5dc", 2.5);
 sunlight.position.set(-5, 10, 6);
 scene.add(sunlight);
+// Low-poly bulutlar
+function createCloud(x, y, z, scale = 1) {
+  const cloud = new THREE.Group();
 
+  const cloudMaterial = new THREE.MeshLambertMaterial({
+    color: "#ffffff",
+  });
+
+  const puffs = [
+    [-0.7, 0, 0, 0.65],
+    [0, 0.2, 0, 0.85],
+    [0.7, 0, 0, 0.6],
+    [0.2, -0.1, 0.25, 0.6],
+  ];
+
+  puffs.forEach(([px, py, pz, size]) => {
+    const puff = new THREE.Mesh(
+      new THREE.IcosahedronGeometry(size, 1),
+      cloudMaterial
+    );
+
+    puff.position.set(px, py, pz);
+    cloud.add(puff);
+  });
+
+  cloud.position.set(x, y, z);
+  cloud.scale.setScalar(scale);
+  scene.add(cloud);
+}
+
+createCloud(-8, 8, -12, 1.5);
+createCloud(1, 10, -16, 1.8);
+createCloud(10, 7, -10, 1.3);
+createCloud(-13, 6, -5, 1.1);
 const ground = new THREE.Mesh(
   new THREE.PlaneGeometry(50, 50),
   new THREE.MeshLambertMaterial({ color: "#805634" })
