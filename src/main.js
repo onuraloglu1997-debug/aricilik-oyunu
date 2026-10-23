@@ -455,7 +455,8 @@ window.addEventListener("resize", resize);
 resize();
 
 const clock = new THREE.Clock();
-
+let honey = 0;
+let lastHoneyTime = 0;
 function animate() {
   requestAnimationFrame(animate);
 
