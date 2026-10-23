@@ -41,6 +41,7 @@ worldChannel.subscribe((status, err) => {
 worldChannel.track({
   playerId,
   playerName,
+  beeNames: JSON.parse(localStorage.getItem("beeNames") || "[]"),
   joinedAt: Date.now(),
 }).then((result) => {
   console.log("Gönderilen oyuncu bilgisi:", {
@@ -255,7 +256,7 @@ function createRemoteHive(playerName) {
   return hiveGroup;
 }
 
-function createRemoteBees() {
+function createRemoteBees(beeNames = []) {
   const playerBees = [];
 
   for (let i = 0; i < 5; i++) {
@@ -289,7 +290,20 @@ function createRemoteBees() {
       wing.scale.set(0.7, 0.25, 1.2);
       bee.add(wing);
     }
+const nameElement = document.createElement("div");
+nameElement.textContent = beeNames[i] || `Arı ${i + 1}`;
+nameElement.style.cssText = `
+  color: white;
+  background: rgba(60, 40, 20, 0.85);
+  padding: 2px 5px;
+  border-radius: 6px;
+  font-size: 10px;
+  white-space: nowrap;
+`;
 
+const nameLabel = new CSS2DObject(nameElement);
+nameLabel.position.set(0, 0.35, 0);
+bee.add(nameLabel);
     scene.add(bee);
 
     playerBees.push({
@@ -325,7 +339,15 @@ function renderRemotePlayers(players) {
       const playerBees = remoteBees.get(id);
 
       if (playerBees) {
-        playerBees.forEach((bee) => scene.remove(bee.mesh));
+        playerBees.forEach((bee) => {
+  scene.remove(bee.mesh);
+
+  bee.mesh.traverse((child) => {
+    if (child instanceof CSS2DObject) {
+      child.element.remove();
+    }
+  });
+});
         remoteBees.delete(id);
       }
     }
@@ -356,7 +378,10 @@ function renderRemotePlayers(players) {
     const [x, z] = neighborSpots[index % neighborSpots.length];
     hive.position.set(x, 0, z);
     if (!remoteBees.has(id)) {
-  remoteBees.set(id, createRemoteBees());
+  remoteBees.set(
+  id,
+  createRemoteBees(players[id]?.beeNames || [])
+);
 }
   });
 
