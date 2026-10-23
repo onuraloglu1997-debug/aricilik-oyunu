@@ -225,6 +225,11 @@ function renderRemotePlayers(players) {
   for (const [id, hive] of remoteHives) {
     if (!onlineIds.has(id)) {
       scene.remove(hive);
+      hive.traverse((child) => {
+  if (child instanceof CSS2DObject) {
+    child.element.remove();
+  }
+});
       remoteHives.delete(id);
 
       const playerBees = remoteBees.get(id);
