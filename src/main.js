@@ -489,6 +489,31 @@ function animate() {
     mesh.rotation.z = Math.sin(time * 4 + bee.phase) * 0.12;
   });
 
+  // Komşu oyuncuların arılarını uçur
+  remoteBees.forEach((playerBees, playerId) => {
+    const hive = remoteHives.get(playerId);
+    if (!hive) return;
+
+    playerBees.forEach((bee) => {
+      const timeOffset = time * bee.speed + bee.phase;
+
+      const targetX =
+        hive.position.x + Math.cos(timeOffset) * bee.radius;
+      const targetZ =
+        hive.position.z + Math.sin(timeOffset) * bee.radius;
+      const targetY = 1.2 + Math.sin(timeOffset * 2) * 0.25;
+
+      bee.mesh.position.x +=
+        (targetX - bee.mesh.position.x) * 0.05;
+      bee.mesh.position.z +=
+        (targetZ - bee.mesh.position.z) * 0.05;
+      bee.mesh.position.y +=
+        (targetY - bee.mesh.position.y) * 0.05;
+
+      bee.mesh.rotation.y = -timeOffset;
+    });
+  });
+
   renderer.render(scene, camera);
   labelRenderer.render(scene, camera);
 }
