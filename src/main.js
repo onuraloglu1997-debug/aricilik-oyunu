@@ -125,7 +125,8 @@ const ground = new THREE.Mesh(
 ground.rotation.x = -Math.PI / 2;
 ground.position.y = -0.05;
 scene.add(ground);
-// Yeşil çimenlik alanlar
+
+ // Yeşil çimenlik alanlar
 const grassPatches = [
   [-7, -5, 5, 4],
   [6, -6, 4, 5],
@@ -142,10 +143,15 @@ grassPatches.forEach(([x, z, width, depth], index) => {
       color: index % 2 === 0 ? "#7fa65a" : "#91b765",
     })
   );
+
+  patch.rotation.x = -Math.PI / 2;
+  patch.position.set(x, -0.035, z);
+  scene.add(patch);
+});
+
 // Farklı boylarda low-poly ot kümeleri
 function createGrassTuft(x, z, scale = 1) {
   const grass = new THREE.Group();
-
   const colors = ["#4f823c", "#6b9b45", "#83ad52"];
 
   for (let i = 0; i < 3; i++) {
@@ -172,19 +178,11 @@ for (let i = 0; i < 65; i++) {
   const x = Math.random() * 24 - 12;
   const z = Math.random() * 24 - 12;
 
-  // Kovanın tam çevresini açık bırak
   if (Math.abs(x) < 2 && Math.abs(z) < 2) continue;
 
-  createGrassTuft(
-    x,
-    z,
-    0.55 + Math.random() * 0.8
-  );
+  createGrassTuft(x, z, 0.55 + Math.random() * 0.8);
 }
-  patch.rotation.x = -Math.PI / 2;
-  patch.position.set(x, -0.035, z);
-  scene.add(patch);
-});
+
 function addBox(width, height, depth, color, x, y, z) {
   const mesh = new THREE.Mesh(
     new THREE.BoxGeometry(width, height, depth),
