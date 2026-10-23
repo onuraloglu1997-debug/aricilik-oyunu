@@ -106,7 +106,7 @@ const neighborSpots = [
   [0, -5],
 ];
 
-function createRemoteHive() {
+ffunction createRemoteHive(playerName) {
   const hiveGroup = new THREE.Group();
 
   function addHivePart(width, height, depth, color, x, y, z) {
@@ -138,7 +138,7 @@ function createRemoteHive() {
   addHivePart(0.18, 0.25, 0.18, "#65422b", 0.72, 0.12, -0.55);
 
   const nameElement = document.createElement("div");
-  nameElement.textContent = "Arıcı";
+  nameElement.textContent = playerName || "Arıcı";
   nameElement.style.cssText = `
     color: white;
     background: rgba(60, 40, 20, 0.85);
@@ -174,7 +174,11 @@ function renderRemotePlayers(players) {
   // Çevrimiçi oyuncuların kovanlarını göster
   remoteIds.forEach((id, index) => {
     if (!remoteHives.has(id)) {
-      remoteHives.set(id, createRemoteHive());
+      const playerData = players[id]?.[0];
+remoteHives.set(
+  id,
+  createRemoteHive(playerData?.playerName || "Arıcı")
+);
     }
 
     const hive = remoteHives.get(id);
