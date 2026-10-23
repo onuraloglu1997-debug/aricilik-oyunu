@@ -157,6 +157,7 @@ ffunction createRemoteHive(playerName) {
   `;
 
   const nameLabel = new CSS2DObject(nameElement);
+  console.log("Kovan etiketi oluşturuldu:", playerName, nameElement);
   nameLabel.position.set(0, 2.8, 0);
   hiveGroup.add(nameLabel);
 
