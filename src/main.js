@@ -38,9 +38,10 @@ worldChannel.subscribe((status, err) => {
 
   if (status === "SUBSCRIBED") {
     worldChannel.track({
-      playerId,
-      joinedAt: Date.now(),
-    });
+  playerId,
+  playerName,
+  joinedAt: Date.now(),
+});
     console.log("Çevrimiçi dünyaya bağlandın!");
   }
 
