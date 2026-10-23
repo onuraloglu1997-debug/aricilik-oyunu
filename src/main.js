@@ -427,6 +427,7 @@ function renderBeeList() {
 
     input.addEventListener("change", () => {
       beeNames[index] = input.value.trim() || `Arı ${index + 1}`;
+      localStorage.setItem("beeNames", JSON.stringify(beeNames));
       input.value = beeNames[index];
       beeLabels[index].textContent = beeNames[index];
     });
