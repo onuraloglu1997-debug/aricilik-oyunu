@@ -378,13 +378,26 @@ function renderRemotePlayers(players) {
     const [x, z] = neighborSpots[index % neighborSpots.length];
     hive.position.set(x, 0, z);
     if (!remoteBees.has(id)) {
-  remoteBees.set(
-  id,
-  createRemoteBees(players[id]?.beeNames || [])
-);
-}
-  });
+      remoteBees.set(
+        id,
+        createRemoteBees(playerData?.beeNames || [])
+      );
+    }
 
+    const playerBees = remoteBees.get(id);
+    const beeNames = playerData?.beeNames || [];
+
+    playerBees?.forEach((bee, i) => {
+      const nameLabel = bee.mesh.children.find(
+        (child) => child instanceof CSS2DObject
+      );
+
+      if (nameLabel) {
+        nameLabel.element.textContent =
+          beeNames[i] || `Arı ${i + 1}`;
+      }
+    });
+      });
 }
 
 // Kovan: tek kutu ve tek giriş deliği
@@ -549,6 +562,12 @@ function renderBeeList() {
       localStorage.setItem("beeNames", JSON.stringify(beeNames));
       input.value = beeNames[index];
       beeLabels[index].textContent = beeNames[index];
+      worldChannel.track({
+  playerId,
+  playerName,
+  beeNames: [...beeNames],
+  joinedAt: Date.now(),
+});
     });
 
     row.append(icon, input);
