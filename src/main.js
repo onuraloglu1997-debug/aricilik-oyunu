@@ -92,7 +92,28 @@ const ground = new THREE.Mesh(
 ground.rotation.x = -Math.PI / 2;
 ground.position.y = -0.05;
 scene.add(ground);
+// Yeşil çimenlik alanlar
+const grassPatches = [
+  [-7, -5, 5, 4],
+  [6, -6, 4, 5],
+  [-8, 4, 4, 5],
+  [7, 5, 5, 4],
+  [0, -8, 6, 3],
+  [-3, 7, 5, 3],
+];
 
+grassPatches.forEach(([x, z, width, depth], index) => {
+  const patch = new THREE.Mesh(
+    new THREE.PlaneGeometry(width, depth),
+    new THREE.MeshLambertMaterial({
+      color: index % 2 === 0 ? "#7fa65a" : "#91b765",
+    })
+  );
+
+  patch.rotation.x = -Math.PI / 2;
+  patch.position.set(x, -0.035, z);
+  scene.add(patch);
+});
 function addBox(width, height, depth, color, x, y, z) {
   const mesh = new THREE.Mesh(
     new THREE.BoxGeometry(width, height, depth),
