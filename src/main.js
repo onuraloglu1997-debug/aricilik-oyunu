@@ -182,6 +182,7 @@ function renderRemotePlayers(players) {
  
   remoteIds.forEach((id, index) => {
     const playerData = players[id]?.[0];
+    console.log("Diğer oyuncunun verisi:", id, playerData);
     const playerName = playerData?.playerName || "Arıcı";
 
     if (!remoteHives.has(id)) {
