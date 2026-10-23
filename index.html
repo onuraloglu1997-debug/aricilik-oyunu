@@ -19,9 +19,29 @@
       </header>
 
       <main id="game-layout">
+        
         <section id="game-container" aria-label="Arıcılık oyun alanı">
           <div id="loading-message">Kovan hazırlanıyor...</div>
+
+          <div id="chat-panel">
+            <div id="chat-header">💬 Kovan Sohbeti</div>
+            <div id="chat-messages" aria-live="polite">
+              <div class="chat-system-message">Sohbete hoş geldin!</div>
+            </div>
+            <form id="chat-form">
+              <input
+                id="chat-input"
+                type="text"
+                maxlength="200"
+                placeholder="Mesajını yaz..."
+                autocomplete="off"
+                aria-label="Sohbet mesajı"
+              />
+              <button type="submit">Gönder</button>
+            </form>
+          </div>
         </section>
+
 
         <aside id="bee-panel">
           <h2>Arılarım</h2>
