@@ -388,7 +388,11 @@ for (let i = 0; i < 5; i++) {
   });
 }
 
-const beeNames = ["Pamuk", "Boncuk", "Balım", "Pıtırcık", "Sarı"];
+const savedBeeNames = JSON.parse(localStorage.getItem("beeNames") || "null");
+
+const beeNames = Array.isArray(savedBeeNames) && savedBeeNames.length === 5
+  ? savedBeeNames
+  : ["Pamuk", "Boncuk", "Balım", "Pıtırcık", "Sarı"];
 const beeLabels = bees.map((bee, index) => {
   const element = document.createElement("div");
 
