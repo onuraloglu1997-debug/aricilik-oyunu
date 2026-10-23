@@ -458,6 +458,15 @@ const clock = new THREE.Clock();
 let honey = 0;
 let lastHoneyTime = 0;
 function animate() {
+    const currentTime = clock.getElapsedTime();
+
+  if (currentTime - lastHoneyTime >= 10) {
+    honey += 1;
+    lastHoneyTime = currentTime;
+
+    document.getElementById("honey-counter").textContent =
+      `🍯 ${honey} g bal`;
+  }
   requestAnimationFrame(animate);
 
   const time = clock.getElapsedTime();
