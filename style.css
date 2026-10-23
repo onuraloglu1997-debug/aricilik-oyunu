@@ -254,3 +254,154 @@ input {
     width: min(300px, calc(100% - 16px));
   }
 }
+
+/* Arı mağazası düğmesi */
+#shop-toggle {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 6;
+  padding: 10px 14px;
+  border: 1px solid #d6a84c;
+  border-radius: 10px;
+  background: #6a492b;
+  color: #fff0ce;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+}
+
+#shop-toggle:hover {
+  background: #896039;
+}
+
+/* Mağaza penceresi */
+#shop-panel {
+  position: absolute;
+  z-index: 7;
+  top: 58px;
+  left: 12px;
+  width: min(340px, calc(100% - 24px));
+  max-height: min(480px, calc(100% - 80px));
+  overflow-y: auto;
+  box-sizing: border-box;
+  border: 2px solid #d6a84c;
+  border-radius: 14px;
+  background: rgba(57, 41, 31, 0.97);
+  color: #fff0ce;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+#shop-panel[hidden] {
+  display: none;
+}
+
+#shop-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  background: #6a492b;
+  border-bottom: 1px solid #92704b;
+}
+
+#shop-header h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+#shop-close {
+  padding: 4px 9px;
+  border: 0;
+  border-radius: 6px;
+  background: #d6a84c;
+  color: #39291f;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#shop-content {
+  padding: 12px;
+  font-size: 14px;
+}
+
+@media (max-width: 480px) {
+  #shop-toggle {
+    top: 8px;
+    left: 8px;
+  }
+
+  #shop-panel {
+    top: 54px;
+    left: 8px;
+    width: min(300px, calc(100% - 16px));
+  }
+}
+
+/* Arı mağazası kategorileri ve kartları */
+#shop-categories {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.shop-category {
+  padding: 8px 12px;
+  border: 1px solid #d6a84c;
+  border-radius: 8px;
+  background: #493527;
+  color: #fff0ce;
+  cursor: pointer;
+}
+
+.shop-category.active {
+  background: #d6a84c;
+  color: #39291f;
+}
+
+#shop-items {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.shop-item {
+  padding: 10px;
+  border: 1px solid #92704b;
+  border-radius: 10px;
+  background: #493527;
+  text-align: center;
+}
+
+.shop-item .bee-preview {
+  margin-bottom: 8px;
+  font-size: 32px;
+}
+
+.shop-item h3 {
+  margin: 4px 0;
+  font-size: 14px;
+}
+
+.shop-item p {
+  margin: 6px 0;
+  font-size: 12px;
+}
+
+.shop-item button {
+  width: 100%;
+  padding: 7px;
+  border: 0;
+  border-radius: 7px;
+  background: #d6a84c;
+  color: #39291f;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.shop-item button:disabled {
+  background: #827767;
+  cursor: default;
+}
