@@ -114,10 +114,10 @@ function createCloud(x, y, z, scale = 1) {
   scene.add(cloud);
 }
 
-createCloud(-8, 8, -12, 1.5);
-createCloud(1, 10, -16, 1.8);
-createCloud(10, 7, -10, 1.3);
-createCloud(-13, 6, -5, 1.1);
+createCloud(-5, 7, -4, 1.5);
+createCloud(0, 8, -7, 1.8);
+createCloud(5, 7, -5, 1.4);
+createCloud(2, 9, -10, 1.6);
 const ground = new THREE.Mesh(
   new THREE.PlaneGeometry(50, 50),
   new THREE.MeshLambertMaterial({ color: "#805634" })
