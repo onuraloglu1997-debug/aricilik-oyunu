@@ -453,7 +453,8 @@ function resize() {
 
 window.addEventListener("resize", resize);
 resize();
-
+document.getElementById("honey-counter").textContent =
+  `🍯 ${honey} g bal`;
 const clock = new THREE.Clock();
 let honey = Number(localStorage.getItem("honey")) || 0;
 let lastHoneyTime = 0;
