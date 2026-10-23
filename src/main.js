@@ -142,7 +142,45 @@ grassPatches.forEach(([x, z, width, depth], index) => {
       color: index % 2 === 0 ? "#7fa65a" : "#91b765",
     })
   );
+// Farklı boylarda low-poly ot kümeleri
+function createGrassTuft(x, z, scale = 1) {
+  const grass = new THREE.Group();
 
+  const colors = ["#4f823c", "#6b9b45", "#83ad52"];
+
+  for (let i = 0; i < 3; i++) {
+    const blade = new THREE.Mesh(
+      new THREE.ConeGeometry(0.09 * scale, 0.55 * scale, 5),
+      new THREE.MeshLambertMaterial({ color: colors[i] })
+    );
+
+    blade.position.set(
+      (i - 1) * 0.12 * scale,
+      0.25 * scale,
+      (i % 2) * 0.1 * scale
+    );
+
+    blade.rotation.z = (i - 1) * 0.22;
+    grass.add(blade);
+  }
+
+  grass.position.set(x, 0, z);
+  scene.add(grass);
+}
+
+for (let i = 0; i < 65; i++) {
+  const x = Math.random() * 24 - 12;
+  const z = Math.random() * 24 - 12;
+
+  // Kovanın tam çevresini açık bırak
+  if (Math.abs(x) < 2 && Math.abs(z) < 2) continue;
+
+  createGrassTuft(
+    x,
+    z,
+    0.55 + Math.random() * 0.8
+  );
+}
   patch.rotation.x = -Math.PI / 2;
   patch.position.set(x, -0.035, z);
   scene.add(patch);
