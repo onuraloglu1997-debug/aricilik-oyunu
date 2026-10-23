@@ -463,7 +463,7 @@ function animate() {
   if (currentTime - lastHoneyTime >= 10) {
     honey += 1;
     lastHoneyTime = currentTime;
-
+    localStorage.setItem("honey", honey);
     document.getElementById("honey-counter").textContent =
       `🍯 ${honey} g bal`;
   }
