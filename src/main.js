@@ -20,9 +20,11 @@ const worldChannel = supabase.channel("apiary-world", {
     presence: {
       key: playerId,
     },
+    broadcast: {
+      self: false,
+    },
   },
 });
-
 worldChannel.on("presence", { event: "sync" }, () => {
   const players = worldChannel.presenceState();
 
@@ -30,6 +32,83 @@ worldChannel.on("presence", { event: "sync" }, () => {
   console.log("Oyuncu sayısı:", Object.keys(players).length);
 
   renderRemotePlayers(players);
+});
+
+
+function displayChatMessage(name, message) {
+  const messages = document.querySelector("#chat-messages");
+  if (!messages) return;
+
+  const row = document.createElement("div");
+  row.className = "chat-message";
+
+  const nameLabel = document.createElement("span");
+  nameLabel.className = "chat-player-name";
+  nameLabel.textContent = `${name}: `;
+
+  const messageText = document.createElement("span");
+  messageText.textContent = message;
+
+  row.append(nameLabel, messageText);
+  messages.appendChild(row);
+
+  // En fazla 100 mesajı ekranda tut
+  while (messages.children.length > 100) {
+    messages.firstElementChild.remove();
+  }
+
+  messages.scrollTop = messages.scrollHeight;
+}
+
+worldChannel.on("broadcast", { event: "chat-message" }, ({ payload }) => {
+  if (
+    typeof payload?.playerName !== "string" ||
+    typeof payload?.message !== "string"
+  ) {
+    return;
+  }
+
+  displayChatMessage(payload.playerName, payload.message);
+});
+
+
+async function sendChatMessage(message) {
+  const cleanMessage = message.trim();
+
+  if (!cleanMessage) return;
+
+  const result = await worldChannel.send({
+    type: "broadcast",
+    event: "chat-message",
+    payload: {
+      playerId,
+      playerName,
+      message: cleanMessage,
+      sentAt: Date.now(),
+    },
+  });
+
+  if (result !== "ok") {
+    console.error("Mesaj gönderilemedi:", result);
+    return;
+  }
+
+  displayChatMessage(playerName, cleanMessage);
+}
+
+const chatForm = document.querySelector("#chat-form");
+const chatInput = document.querySelector("#chat-input");
+
+chatForm?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const message = chatInput.value.trim();
+  if (!message) return;
+
+  await sendChatMessage(message);
+
+  chatInput.value = "";
+  chatInput.focus();
 });
 
 worldChannel.subscribe((status, err) => {
