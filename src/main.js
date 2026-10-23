@@ -8,6 +8,13 @@ const container = document.querySelector("#game-container");
 const playerId = sessionStorage.getItem("playerId") || crypto.randomUUID();
 sessionStorage.setItem("playerId", playerId);
 
+const playerName =
+  localStorage.getItem("playerName") ||
+  prompt("Oyunda hangi isimle görünmek istiyorsun?") ||
+  "Arıcı";
+
+localStorage.setItem("playerName", playerName);
+
 const worldChannel = supabase.channel("apiary-world", {
   config: {
     presence: {
