@@ -489,30 +489,53 @@ function animate() {
     mesh.rotation.z = Math.sin(time * 4 + bee.phase) * 0.12;
   });
 
-  // Komşu oyuncuların arılarını uçur
+
+  // Komşu oyuncuların arıları: kovandan çiçeğe, sonra kovana
   remoteBees.forEach((playerBees, playerId) => {
     const hive = remoteHives.get(playerId);
     if (!hive) return;
 
-    playerBees.forEach((bee) => {
-      const timeOffset = time * bee.speed + bee.phase;
+    playerBees.forEach((bee, i) => {
+      const flower = flowers[(i + 1) % flowers.length];
+      const cycle = (time * bee.speed + bee.phase) % 10;
 
-      const targetX =
-        hive.position.x + Math.cos(timeOffset) * bee.radius;
-      const targetZ =
-        hive.position.z + Math.sin(timeOffset) * bee.radius;
-      const targetY = 1.2 + Math.sin(timeOffset * 2) * 0.25;
+      let targetX;
+      let targetZ;
+
+      if (cycle < 2) {
+        // Kovandan çıkış
+        targetX = hive.position.x;
+        targetZ = hive.position.z + 1.1;
+      } else if (cycle < 4) {
+        // Çiçeğe uçuş
+        targetX = flower.position.x;
+        targetZ = flower.position.z;
+      } else if (cycle < 6) {
+        // Çiçekte bekleme
+        targetX = flower.position.x;
+        targetZ = flower.position.z;
+      } else {
+        // Kovandaki girişe dönüş
+        targetX = hive.position.x;
+        targetZ = hive.position.z + 1.1;
+      }
+
+      const targetY = cycle >= 2 && cycle < 6 ? 0.7 : 1.15;
 
       bee.mesh.position.x +=
-        (targetX - bee.mesh.position.x) * 0.05;
-      bee.mesh.position.z +=
-        (targetZ - bee.mesh.position.z) * 0.05;
-      bee.mesh.position.y +=
-        (targetY - bee.mesh.position.y) * 0.05;
+        (targetX - bee.mesh.position.x) * 0.025;
 
-      bee.mesh.rotation.y = -timeOffset;
+      bee.mesh.position.z +=
+        (targetZ - bee.mesh.position.z) * 0.025;
+
+      bee.mesh.position.y +=
+        (targetY + Math.sin(time * 7 + bee.phase) * 0.12 -
+          bee.mesh.position.y) * 0.06;
+
+      bee.mesh.rotation.z = Math.sin(time * 4 + bee.phase) * 0.12;
     });
   });
+
 
   renderer.render(scene, camera);
   labelRenderer.render(scene, camera);
