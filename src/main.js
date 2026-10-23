@@ -5,6 +5,123 @@ import "../style.css";
 import { supabase } from "./supabase.js";
 
 const container = document.querySelector("#game-container");
+// Arı mağazası açma ve kapatma
+const shopToggle = document.querySelector("#shop-toggle");
+const shopPanel = document.querySelector("#shop-panel");
+const shopClose = document.querySelector("#shop-close");
+
+shopToggle?.addEventListener("click", () => {
+  shopPanel.hidden = !shopPanel.hidden;
+});
+
+shopClose?.addEventListener("click", () => {
+  shopPanel.hidden = true;
+});
+
+const shopItems = document.querySelector("#shop-items");
+
+const beeShopOptions = [
+  { id: "classic", name: "Klasik Arı", emoji: "🐝", price: 0, description: "Başlangıç arısı" },
+  { id: "small-spots", name: "Ufak Benekli", emoji: "🐝", price: 20, description: "Minik benekler" },
+  { id: "big-spots", name: "Büyük Benekli", emoji: "🐝", price: 35, description: "İri benekler" },
+  { id: "chubby", name: "Şişko Arı", emoji: "🐝", price: 50, description: "Tombul gövde" },
+  { id: "slim", name: "Zayıf Arı", emoji: "🐝", price: 50, description: "İnce gövde" },
+  { id: "scarf", name: "Atkılı Arı", emoji: "🧣🐝", price: 75, description: "Atkısını takmış" },
+  { id: "shoes", name: "Ayakkabılı Arı", emoji: "🐝👟", price: 100, description: "Ayakkabıları hazır" },
+];
+
+function renderBeeShop() {
+  if (!shopItems) return;
+
+  shopItems.innerHTML = "";
+
+  beeShopOptions.forEach((bee) => {
+    const card = document.createElement("div");
+    card.className = "shop-item";
+
+
+const ownedBeeLooks = JSON.parse(
+  localStorage.getItem("ownedBeeLooks") || '["classic"]'
+);
+const selectedBeeLook =
+  localStorage.getItem("selectedBeeLook") || "classic";
+
+card.innerHTML = `
+  <div class="bee-preview">${bee.emoji}</div>
+  <h3>${bee.name}</h3>
+  <p>${bee.description}</p>
+  <p>🍯 ${bee.price} g bal</p>
+  <button type="button">
+    ${
+      selectedBeeLook === bee.id
+        ? "Seçili"
+        : ownedBeeLooks.includes(bee.id)
+          ? "Kullan"
+          : "Satın al"
+    }
+  </button>
+`;
+
+const button = card.querySelector("button");
+
+button.addEventListener("click", () => {
+  const owned = JSON.parse(
+    localStorage.getItem("ownedBeeLooks") || '["classic"]'
+  );
+  const selected =
+    localStorage.getItem("selectedBeeLook") || "classic";
+
+if (owned.includes(bee.id)) {
+  localStorage.setItem("selectedBeeLook", bee.id);
+
+  bees.forEach((localBee) => {
+    applyBeeLook(localBee.mesh, bee.id);
+  });
+worldChannel.track({
+  playerId,
+  playerName,
+  beeNames: JSON.parse(localStorage.getItem("beeNames") || "[]"),
+  beeAppearance: bee.id,
+  joinedAt: Date.now(),
+});
+  renderBeeShop();
+  return;
+}
+
+  if (honey < bee.price) {
+    alert("Yeterli balın yok knk! 🍯");
+    return;
+  }
+
+  honey -= bee.price;
+  localStorage.setItem("honey", String(honey));
+  updateHoneyCounter();
+
+owned.push(bee.id);
+localStorage.setItem("ownedBeeLooks", JSON.stringify(owned));
+localStorage.setItem("selectedBeeLook", bee.id);
+
+bees.forEach((localBee) => {
+  applyBeeLook(localBee.mesh, bee.id);
+});
+worldChannel.track({
+  playerId,
+  playerName,
+  beeNames: JSON.parse(localStorage.getItem("beeNames") || "[]"),
+  beeAppearance: bee.id,
+  joinedAt: Date.now(),
+});
+renderBeeShop();
+});
+
+
+
+    shopItems.appendChild(card);
+  });
+}
+
+renderBeeShop();
+
 const playerId = sessionStorage.getItem("playerId") || crypto.randomUUID();
 sessionStorage.setItem("playerId", playerId);
 
@@ -121,6 +238,7 @@ worldChannel.track({
   playerId,
   playerName,
   beeNames: JSON.parse(localStorage.getItem("beeNames") || "[]"),
+  beeAppearance: getSelectedBeeLook(),
   joinedAt: Date.now(),
 }).then((result) => {
   console.log("Gönderilen oyuncu bilgisi:", {
@@ -335,7 +453,7 @@ function createRemoteHive(playerName) {
   return hiveGroup;
 }
 
-function createRemoteBees(beeNames = []) {
+function createRemoteBees(beeNames = [], beeAppearance = "classic") {
   const playerBees = [];
 
   for (let i = 0; i < 5; i++) {
@@ -354,7 +472,9 @@ function createRemoteBees(beeNames = []) {
     );
     stripe.position.x = 0.03;
     bee.add(stripe);
-
+    
+    applyBeeLook(bee, beeAppearance);
+    
     for (const side of [-1, 1]) {
       const wing = new THREE.Mesh(
         new THREE.SphereGeometry(0.09, 8, 6),
@@ -385,12 +505,13 @@ nameLabel.position.set(0, 0.35, 0);
 bee.add(nameLabel);
     scene.add(bee);
 
-    playerBees.push({
-      mesh: bee,
-      phase: (Math.PI * 2 * i) / 5,
-      speed: 0.7 + Math.random() * 0.3,
-      radius: 1.2 + Math.random() * 0.8
-    });
+playerBees.push({
+  mesh: bee,
+  appearance: beeAppearance,
+  phase: (Math.PI * 2 * i) / 5,
+  speed: 0.7 + Math.random() * 0.3,
+  radius: 1.2 + Math.random() * 0.8
+});
   }
 
   return playerBees;
@@ -456,11 +577,23 @@ function renderRemotePlayers(players) {
 
     const [x, z] = neighborSpots[index % neighborSpots.length];
     hive.position.set(x, 0, z);
-    if (!remoteBees.has(id)) {
-      remoteBees.set(
-        id,
-        createRemoteBees(playerData?.beeNames || [])
-      );
+const beeAppearance = playerData?.beeAppearance || "classic";
+
+if (!remoteBees.has(id)) {
+  remoteBees.set(
+    id,
+    createRemoteBees(playerData?.beeNames || [], beeAppearance)
+  );
+} else {
+  const playerBees = remoteBees.get(id);
+
+  playerBees.forEach((bee) => {
+    if (bee.appearance !== beeAppearance) {
+      applyBeeLook(bee.mesh, beeAppearance);
+      bee.appearance = beeAppearance;
+    }
+  });
+}
     }
 
     const playerBees = remoteBees.get(id);
@@ -549,10 +682,97 @@ for (let i = 0; i < 65; i++) {
   grass.rotation.z = (Math.random() - 0.5) * 0.6;
   scene.add(grass);
 }
+// Seçilen arı görünüşünü oku
+function getSelectedBeeLook() {
+  return localStorage.getItem("selectedBeeLook") || "classic";
+}
+
+
+function getSelectedBeeLook() {
+  return localStorage.getItem("selectedBeeLook") || "classic";
+}
+
+function applyBeeLook(bee, look) {
+  const body = bee.children[0];
+  const stripe = bee.children[1];
+
+  if (!body || !stripe) return;
+
+  // Önceki görünüşe ait parçaları temizle
+  bee.children
+    .filter((part) => part.userData.isBeeAccessory || part.userData.isBeeSpot)
+    .forEach((part) => bee.remove(part));
+
+  body.scale.set(1.25, 0.85, 0.85);
+  body.material.color.set("#edbd35");
+  stripe.visible = true;
+
+  // Benekler
+  if (look === "small-spots" || look === "big-spots") {
+    const count = look === "small-spots" ? 8 : 5;
+    const radius = look === "small-spots" ? 0.018 : 0.035;
+
+    for (let i = 0; i < count; i++) {
+      const spot = new THREE.Mesh(
+        new THREE.SphereGeometry(radius, 8, 6),
+        new THREE.MeshLambertMaterial({ color: "#382b20" })
+      );
+
+      const angle = (i / count) * Math.PI * 2;
+      spot.position.set(
+        Math.cos(angle) * 0.105,
+        Math.sin(angle) * 0.07,
+        0.09
+      );
+      spot.userData.isBeeSpot = true;
+      bee.add(spot);
+    }
+  }
+
+  // Şişko ve zayıf gövde
+  if (look === "chubby") body.scale.set(1.45, 1.1, 1.05);
+  if (look === "slim") body.scale.set(1.45, 0.55, 0.6);
+
+  // Atkı
+  if (look === "scarf") {
+    const scarf = new THREE.Mesh(
+      new THREE.TorusGeometry(0.105, 0.025, 8, 16),
+      new THREE.MeshLambertMaterial({ color: "#d94b40" })
+    );
+    scarf.position.set(-0.015, -0.015, 0.02);
+    scarf.rotation.y = Math.PI / 2;
+    scarf.userData.isBeeAccessory = true;
+    bee.add(scarf);
+
+    const scarfEnd = new THREE.Mesh(
+      new THREE.BoxGeometry(0.045, 0.12, 0.035),
+      new THREE.MeshLambertMaterial({ color: "#d94b40" })
+    );
+    scarfEnd.position.set(-0.08, -0.08, 0.12);
+    scarfEnd.userData.isBeeAccessory = true;
+    bee.add(scarfEnd);
+  }
+
+  // Ayakkabılar
+  if (look === "shoes") {
+    for (const side of [-1, 1]) {
+      for (const frontBack of [-1, 1]) {
+        const shoe = new THREE.Mesh(
+          new THREE.SphereGeometry(0.045, 8, 6),
+          new THREE.MeshLambertMaterial({ color: "#50352a" })
+        );
+        shoe.scale.set(1.2, 0.7, 1);
+        shoe.position.set(frontBack * 0.07, -0.12, side * 0.12);
+        shoe.userData.isBeeAccessory = true;
+        bee.add(shoe);
+      }
+    }
+  }
+}
 
 // Beş basit arı
 const bees = [];
-
+const selectedBeeLook = getSelectedBeeLook();
 for (let i = 0; i < 5; i++) {
   const bee = new THREE.Group();
 
@@ -570,6 +790,8 @@ for (let i = 0; i < 5; i++) {
   stripe.position.x = 0.03;
   bee.add(stripe);
 
+  applyBeeLook(bee, selectedBeeLook);
+  
   for (const side of [-1, 1]) {
     const wing = new THREE.Mesh(
       new THREE.SphereGeometry(0.09, 8, 6),
@@ -678,6 +900,10 @@ let lastHoneyTime = 0;
 
 document.getElementById("honey-counter").textContent =
   `🍯 ${honey} g bal`;
+function updateHoneyCounter() {
+  document.getElementById("honey-counter").textContent =
+    `🍯 ${honey} g bal`;
+}
 function animate() {
     const currentTime = clock.getElapsedTime();
 
