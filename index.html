@@ -22,7 +22,32 @@
         
         <section id="game-container" aria-label="Arıcılık oyun alanı">
           <div id="loading-message">Kovan hazırlanıyor...</div>
+<!-- Mağaza düğmesi -->
+<button id="shop-toggle" type="button" aria-label="Arı mağazasını aç">
+  🛍️ Mağaza
+</button>
 
+<!-- Mağaza paneli -->
+<div id="shop-panel" hidden>
+  <div id="shop-header">
+    <h2>🐝 Arı Mağazası</h2>
+    <button id="shop-close" type="button" aria-label="Mağazayı kapat">
+      ✕
+    </button>
+  </div>
+
+<div id="shop-content">
+  <div id="shop-categories">
+    <button class="shop-category active" data-category="bees">
+      🐝 Arılar
+    </button>
+  </div>
+
+  <div id="shop-items">
+    <p>Arı mağazası hazırlanıyor...</p>
+  </div>
+</div>
+</div>
           <div id="chat-panel">
             <div id="chat-header">💬 Kovan Sohbeti</div>
             <div id="chat-messages" aria-live="polite">
