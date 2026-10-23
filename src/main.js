@@ -37,11 +37,19 @@ worldChannel.subscribe((status, err) => {
   if (err) console.error("Supabase ayrıntılı hata:", err);
 
   if (status === "SUBSCRIBED") {
-    worldChannel.track({
+
+worldChannel.track({
   playerId,
   playerName,
   joinedAt: Date.now(),
+}).then((result) => {
+  console.log("Gönderilen oyuncu bilgisi:", {
+    playerId,
+    playerName,
+    result,
+  });
 });
+
     console.log("Çevrimiçi dünyaya bağlandın!");
   }
 
