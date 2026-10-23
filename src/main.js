@@ -260,6 +260,9 @@ function renderRemotePlayers(players) {
 
     const [x, z] = neighborSpots[index % neighborSpots.length];
     hive.position.set(x, 0, z);
+    if (!remoteBees.has(id)) {
+  remoteBees.set(id, createRemoteBees());
+}
   });
 
 }
