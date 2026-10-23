@@ -137,6 +137,21 @@ function createRemoteHive() {
   addHivePart(0.18, 0.25, 0.18, "#65422b", -0.72, 0.12, -0.55);
   addHivePart(0.18, 0.25, 0.18, "#65422b", 0.72, 0.12, -0.55);
 
+  const nameElement = document.createElement("div");
+  nameElement.textContent = "Arıcı";
+  nameElement.style.cssText = `
+    color: white;
+    background: rgba(60, 40, 20, 0.85);
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: 13px;
+    white-space: nowrap;
+  `;
+
+  const nameLabel = new CSS2DObject(nameElement);
+  nameLabel.position.set(0, 2.8, 0);
+  hiveGroup.add(nameLabel);
+
   scene.add(hiveGroup);
   return hiveGroup;
 }
