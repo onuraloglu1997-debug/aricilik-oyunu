@@ -104,7 +104,7 @@ function addBox(width, height, depth, color, x, y, z) {
 }
 
 const remoteHives = new Map();
-
+const remoteBees = new Map();
 const neighborSpots = [
   [4, 3],
   [-4, 3],
@@ -163,6 +163,54 @@ function createRemoteHive(playerName) {
 
   scene.add(hiveGroup);
   return hiveGroup;
+}
+
+function createRemoteBees() {
+  const playerBees = [];
+
+  for (let i = 0; i < 5; i++) {
+    const bee = new THREE.Group();
+
+    const body = new THREE.Mesh(
+      new THREE.SphereGeometry(0.14, 10, 8),
+      new THREE.MeshLambertMaterial({ color: "#edbd35" })
+    );
+    body.scale.set(1.25, 0.85, 0.85);
+    bee.add(body);
+
+    const stripe = new THREE.Mesh(
+      new THREE.BoxGeometry(0.06, 0.19, 0.19),
+      new THREE.MeshLambertMaterial({ color: "#382b20" })
+    );
+    stripe.position.x = 0.03;
+    bee.add(stripe);
+
+    for (const side of [-1, 1]) {
+      const wing = new THREE.Mesh(
+        new THREE.SphereGeometry(0.09, 8, 6),
+        new THREE.MeshLambertMaterial({
+          color: "#eff4e7",
+          transparent: true,
+          opacity: 0.8
+        })
+      );
+
+      wing.position.set(-0.02, 0.12, side * 0.12);
+      wing.scale.set(0.7, 0.25, 1.2);
+      bee.add(wing);
+    }
+
+    scene.add(bee);
+
+    playerBees.push({
+      mesh: bee,
+      phase: (Math.PI * 2 * i) / 5,
+      speed: 0.7 + Math.random() * 0.3,
+      radius: 1.2 + Math.random() * 0.8
+    });
+  }
+
+  return playerBees;
 }
 
 function renderRemotePlayers(players) {
