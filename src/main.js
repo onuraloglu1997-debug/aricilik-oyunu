@@ -60,8 +60,8 @@ worldChannel.track({
 const loading = document.querySelector("#loading-message");
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color("#b9d5d8");
-scene.fog = new THREE.Fog("#b9d5d8", 18, 45);
+scene.background = new THREE.Color("#87ceeb");
+scene.fog = new THREE.Fog("#c7e5d0", 25, 60);
 
 const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
 camera.position.set(0, 8, 15);
@@ -81,7 +81,7 @@ labelRenderer.domElement.style.zIndex = "2";
 container.appendChild(labelRenderer.domElement);
 scene.add(new THREE.HemisphereLight("#e6f4ff", "#795239", 2));
 
-const sunlight = new THREE.DirectionalLight("#fff0d0", 2.2);
+const sunlight = new THREE.DirectionalLight("#fff5dc", 2.5);
 sunlight.position.set(-5, 10, 6);
 scene.add(sunlight);
 
