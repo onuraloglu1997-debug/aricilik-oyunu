@@ -220,13 +220,22 @@ function renderRemotePlayers(players) {
 
   const onlineIds = new Set(remoteIds);
 
-  // Ayrılan oyuncuların kovanlarını kaldır
+
+  // Ayrılan oyuncuların kovanlarını ve arılarını kaldır
   for (const [id, hive] of remoteHives) {
     if (!onlineIds.has(id)) {
       scene.remove(hive);
       remoteHives.delete(id);
+
+      const playerBees = remoteBees.get(id);
+
+      if (playerBees) {
+        playerBees.forEach((bee) => scene.remove(bee.mesh));
+        remoteBees.delete(id);
+      }
     }
   }
+
 
  
   remoteIds.forEach((id, index) => {
