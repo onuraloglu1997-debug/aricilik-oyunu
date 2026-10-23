@@ -114,7 +114,7 @@ const neighborSpots = [
   [0, -5],
 ];
 
-ffunction createRemoteHive(playerName) {
+function createRemoteHive(playerName) {
   const hiveGroup = new THREE.Group();
 
   function addHivePart(width, height, depth, color, x, y, z) {
