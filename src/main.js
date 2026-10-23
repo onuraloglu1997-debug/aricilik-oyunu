@@ -455,7 +455,7 @@ window.addEventListener("resize", resize);
 resize();
 
 const clock = new THREE.Clock();
-let honey = 0;
+let honey = Number(localStorage.getItem("honey")) || 0;
 let lastHoneyTime = 0;
 function animate() {
     const currentTime = clock.getElapsedTime();
